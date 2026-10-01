@@ -1,3 +1,5 @@
+import { trackLeadView } from './analytics.js';
+
 // Landing page overlay: a showcase of ten places, shown only on a direct
 // visit — a URL with a location (?lat=…&lon=…) or an activation hash skips
 // it and goes straight to the map. Tapping a card teleports there.
@@ -99,4 +101,5 @@ export function mountLanding({ onTeleport, onExplore, onPlayGuesser } = {}) {
   }, { once: true });
 
   root.classList.remove('hidden');
+  trackLeadView('landing');
 }

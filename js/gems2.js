@@ -1,3 +1,5 @@
+import { trackLeadView, trackPurchaseClick } from './analytics.js';
+
 const SUPABASE_URL = 'https://obhxpqdqoszeurgujvex.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_4zhtDgF8IoMpnM_t8o0WrQ_p0XKNFdG';
 const CODE_KEY = 'lg_code';
@@ -51,7 +53,9 @@ export function mountGems({ onSelect }) {
 
   btn.addEventListener('click', () => {
     const open = panel.classList.toggle('open');
-    if (open) refresh();
+    if (!open) return;
+    if (!localStorage.getItem(CODE_KEY)) trackLeadView('gems_panel');
+    refresh();
   });
 
   // free samples shown in the locked view
@@ -74,6 +78,7 @@ export function mountGems({ onSelect }) {
 
   document.getElementById('gemBuyBtn').addEventListener('click', () => {
     if (STRIPE_PAYMENT_LINK) {
+      trackPurchaseClick('gems_panel');
       window.open(STRIPE_PAYMENT_LINK, '_blank', 'noopener');
     } else {
       setStatus('Purchases are not set up yet — a Stripe payment link is needed in js/gems2.js', true);

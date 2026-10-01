@@ -1,5 +1,6 @@
 import { rollRandomLandPlace } from './dice.js';
 import { STRIPE_PAYMENT_LINK, hasPurchasedGems } from './gems2.js';
+import { trackLeadView, trackPurchaseClick } from './analytics.js';
 
 const ROUNDS = 10;
 const QUAD_RETRIES = 8;
@@ -161,6 +162,7 @@ export function mountGuesser({ onTeleport }) {
   }
 
   function showLockedPrompt() {
+    trackLeadView('guesser_modal');
     const { card, close } = baseModal();
     const img = document.createElement('img');
     img.className = 'modal-media';
@@ -181,7 +183,9 @@ export function mountGuesser({ onTeleport }) {
     buy.className = 'modal-btn modal-btn-rainbow';
     buy.textContent = '💎 Buy Location Gems · €1';
     buy.addEventListener('click', () => {
-      if (STRIPE_PAYMENT_LINK) window.open(STRIPE_PAYMENT_LINK, '_blank', 'noopener');
+      if (!STRIPE_PAYMENT_LINK) return;
+      trackPurchaseClick('guesser_modal');
+      window.open(STRIPE_PAYMENT_LINK, '_blank', 'noopener');
     });
     row.append(later, buy);
     card.appendChild(row);

@@ -28,6 +28,21 @@ function loadGoogleAnalytics() {
   window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true });
 }
 
+function track(name, params) {
+  if (typeof window.gtag !== 'function') return;
+  window.gtag('event', name, params);
+}
+
+// Purchase-click funnel. surface is where the lead was shown or the buy
+// button lived: landing | gems_panel | guesser_modal.
+export function trackLeadView(surface) {
+  track('lead_view', { surface });
+}
+
+export function trackPurchaseClick(surface) {
+  track('purchase_click', { surface, currency: 'EUR', value: 1 });
+}
+
 export function initAnalytics() {
   const stored = getConsent();
   if (stored === 'granted') {
