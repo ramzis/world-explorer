@@ -1,4 +1,4 @@
-const GA_MEASUREMENT_ID = 'G-4TW82S9NV1';
+const GA_MEASUREMENT_ID = 'G-LWE127EKVY';
 const CONSENT_COOKIE = 'analytics_consent';
 const CONSENT_MAX_AGE = 30 * 24 * 60 * 60; // 1 month, seconds
 
