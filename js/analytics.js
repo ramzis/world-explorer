@@ -43,6 +43,12 @@ export function trackPurchaseClick(surface) {
   track('purchase_click', { surface, currency: 'EUR', value: 1 });
 }
 
+// Outbound CTA from a content page (blog) into the game. surface names the
+// page + placement, e.g. blog_best_geoguessr_alternatives_hero.
+export function trackCtaClick(surface) {
+  track('cta_click', { surface });
+}
+
 export function initAnalytics() {
   const stored = getConsent();
   if (stored === 'granted') {

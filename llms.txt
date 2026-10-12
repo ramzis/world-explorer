@@ -1,0 +1,17 @@
+# World Explorer
+
+> World Explorer is a 3D map of Earth built from real elevation data and satellite imagery. Its 3D Location Guesser game drops you anywhere on the planet and you pin your guess on a world map. Exploring the map is free with no signup; the guesser is a one-time €1 unlock with no subscription.
+
+## Key facts
+- Game: 3D Location Guesser, 10 rounds, up to 5,000 points per round (50,000 per game), score falls off with distance.
+- Imagery: real 3D terrain plus satellite imagery you fly through; not Street View.
+- Price: exploring is free; the guesser and 100 hand-picked wonders are a one-time €1 unlock.
+- Multiplayer: none (solo, shareable score).
+- URL: https://explorer.tadget.net/
+
+## Articles
+- [Best GeoGuessr alternatives in 2026: 9 games ranked](https://explorer.tadget.net/blog/best-geoguessr-alternatives/): price, imagery and multiplayer comparison of GeoGuessr, WorldGuessr, OpenGuessr, GeoHub, Geotastic, City Guesser, TimeGuessr, Worldle, Globle and Seterra, checked 12 October 2026.
+
+## Optional
+- [Blog index](https://explorer.tadget.net/blog/)
+- [Sitemap](https://explorer.tadget.net/sitemap.xml)
