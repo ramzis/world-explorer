@@ -50,7 +50,12 @@ export class FlyRig {
     };
     this._onClick = () => {
       if (this.noPointerLock) return;
-      if (this.enabled && document.pointerLockElement !== this.dom) this.dom.requestPointerLock();
+      if (this.enabled && document.pointerLockElement !== this.dom) {
+        try {
+          // rejects (e.g. WrongDocumentError) when the page is embedded/detached — click-to-look just stays off
+          this.dom.requestPointerLock()?.catch?.(() => {});
+        } catch { /* pointer lock unavailable */ }
+      }
     };
     this._onLockChange = () => {
       this.onLock?.(document.pointerLockElement === this.dom);
