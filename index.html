@@ -89,6 +89,9 @@
         Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true }),
       ],
       tracesSampleRate: 1.0,
+      // terrain/imagery tiles stream by the hundreds by design — tracing them
+      // is noise and trips Sentry's "N+1 API Call" detector
+      ignoreSpans: [{ op: 'http.client', name: /arcgisonline\.com|elevation-tiles-prod|amazonaws\.com/ }],
       replaysSessionSampleRate: 0.1,
       replaysOnErrorSampleRate: 1.0,
     });
