@@ -386,11 +386,10 @@
 
     /* zen mode: a phone flipped to landscape hides all the UI for a clean
        immersive map view (transient overlays — teleport, landing, cookie —
-       still show; rotating back restores everything) */
-    @media (orientation: landscape) and (pointer: coarse) and (max-height: 500px) {
-      #navBar, #locBar, #gemsBtn, #gemsPanel, #keyHelp, #playGuesserBtn,
-      #exagCol, #altBox, #ctrlModeBtn, #compassBtn { display: none !important; }
-    }
+       still show; rotating back restores everything). The .zen class is set
+       by the script at the end of <body> from the device's real orientation. */
+    html.zen :is(#navBar, #locBar, #gemsBtn, #gemsPanel, #keyHelp, #playGuesserBtn,
+      #exagCol, #altBox, #ctrlModeBtn, #compassBtn) { display: none !important; }
 
     @keyframes gem-spin { to { --gem-angle: 360deg; } }
     @keyframes gem-hue { to { filter: hue-rotate(360deg); } }
@@ -598,24 +597,38 @@
     // request fullscreen on the next user gesture (browsers require one).
     // Only exit fullscreen ourselves if we were the ones who entered it.
     (() => {
-      const zen = matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 500px)');
-      let enteredByUs = false, gestureListener = null;
+      // Zen = the phone itself is turned sideways. Not an (orientation:
+      // landscape) media query: that compares the viewport's width and
+      // height, and browsers that shrink the page for the on-screen keyboard
+      // (Brave on iOS, Chrome on Android) turn a portrait phone "landscape"
+      // the moment the keyboard opens. That hid the search bar mid-tap and
+      // closed the keyboard again.
+      const coarse = matchMedia('(pointer: coarse)');
+      const isZen = () => {
+        if (!coarse.matches) return false;
+        const type = screen.orientation?.type;
+        const landscape = type ? type.startsWith('landscape') : Math.abs(window.orientation || 0) === 90;
+        return landscape && Math.min(screen.width, screen.height) <= 500; // phones, not tablets
+      };
+      let enteredByUs = false, armed = false;
 
       const onGesture = () => {
+        armed = false;
         document.documentElement.requestFullscreen?.().then(() => {
           enteredByUs = true;
         }).catch(() => {}); // user rejected / not allowed — zen CSS still applies
-        removeEventListener('pointerdown', onGesture);
-        gestureListener = null;
       };
 
       const update = () => {
-        if (zen.matches) {
-          if (!document.fullscreenElement && !gestureListener) {
-            gestureListener = addEventListener('pointerdown', onGesture, { once: true });
+        const zen = isZen();
+        document.documentElement.classList.toggle('zen', zen);
+        if (zen) {
+          if (!document.fullscreenElement && !armed) {
+            armed = true;
+            addEventListener('pointerdown', onGesture, { once: true });
           }
         } else {
-          if (gestureListener) { removeEventListener('pointerdown', onGesture); gestureListener = null; }
+          if (armed) { removeEventListener('pointerdown', onGesture); armed = false; }
           if (document.fullscreenElement && enteredByUs) {
             enteredByUs = false;
             document.exitFullscreen?.().catch(() => {});
@@ -623,7 +636,9 @@
         }
       };
 
-      zen.addEventListener('change', update);
+      screen.orientation?.addEventListener('change', update);
+      addEventListener('orientationchange', update); // older iOS without screen.orientation
+      addEventListener('resize', update);
       update();
     })();
   </script>

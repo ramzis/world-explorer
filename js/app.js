@@ -375,11 +375,25 @@ function updateLabelFade() {
   for (const p of places.places.values()) fadeOne(p.sprite);
 }
 
-addEventListener('resize', () => {
+// Browsers that shrink the page for the on-screen keyboard (Brave on iOS,
+// Chrome on Android) fire resize as it opens. Following that would squeeze the
+// same view into fewer pixels — the map visibly zooms out while typing — so
+// hold the size while a text field has focus; the keyboard just covers the
+// bottom of the map. The resizes as it closes (or the catch-up below) re-sync.
+const isTyping = () => {
+  const el = document.activeElement;
+  return isTouch && !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+};
+function resizeView() {
+  if (isTyping()) return;
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
-});
+}
+addEventListener('resize', resizeView);
+// catch-up for a rotation (or keyboard hidden without blur) while typing:
+// once focus leaves and the keyboard has finished animating away
+addEventListener('focusout', () => setTimeout(resizeView, 600));
 
 initAnalytics();
 
