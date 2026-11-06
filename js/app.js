@@ -29,7 +29,23 @@ const ALWAYS_NOON_DEFAULT = true; // sun toggle starts on — always daytime
 // --- renderer / scene -----------------------------------------------------------
 // touch detection must precede the renderer: mobile gets a cheaper pipeline
 const isTouch = matchMedia('(pointer: coarse)').matches;
-const renderer = new THREE.WebGLRenderer({ antialias: !isTouch });
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: !isTouch });
+} catch {
+  // no WebGL (blocked, disabled hardware acceleration, blocklisted GPU): the
+  // app can't run — say so instead of leaving a blank page, and halt quietly
+  // (this is the visitor's browser, not a bug worth an error report)
+  const msg = document.createElement('div');
+  msg.style.cssText =
+    'position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;' +
+    'padding:24px;text-align:center;background:#10141a;color:#e8eaed;font:16px system-ui,sans-serif';
+  msg.textContent =
+    'World Explorer needs WebGL, which this browser has turned off or does not support. ' +
+    'Turn on hardware acceleration in your browser settings, or try another browser.';
+  document.body.appendChild(msg);
+  await new Promise(() => {});
+}
 // 1.5 on touch: a 3x phone screen at full ratio costs ~4x the fill rate for
 // little visible gain on moving terrain — this is the single biggest
 // mobile render-cost saving
